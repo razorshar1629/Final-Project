@@ -38,6 +38,8 @@ void Game::playGame(bool isAIModeIn, ifstream& gameFile) {
             building.spawnPerson(p);
         }
 
+     
+     
         building.prettyPrintBuilding(cout);
         satisfactionIndex.printSatisfaction(cout, false);
         checkForGameEnd();
