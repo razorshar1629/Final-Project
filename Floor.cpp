@@ -4,8 +4,8 @@
  * Floor.cpp
  * Project UID 28eb18c2c1ce490aada441e65559efdd
  *
- * Donovan Sharp, Emily Pytell,
- * donsharp, epytell,
+ * Donovan Sharp, Emily Pytell, Kaitlyn Strukel, Madison Demski
+ * donsharp, epytell, kstrukel, mdemski
  *
  * Final Project - Elevators
  */
@@ -46,12 +46,33 @@ void Floor::addPerson(Person newPerson, int request) {
 }
 
 void Floor::removePeople(int indicesToRemove[MAX_PEOPLE_PER_FLOOR], int numPeopleToRemove) {
-    //TODO: Implement removePeople
+    
+    sort (indicesToRemove, indicesToRemove + numPeopleToRemove);
+    int removeCounter = 0;
+    for (int i = 0; i < numPeopleToRemove; i++) {
+        int personToRemove = indicesToRemove[i];
+        for (int j = personToRemove - removeCounter; j < numPeople - 1; j++) {
+            people[j] = people[j + 1];
+        }
+        removeCounter++;
+        numPeople--;
+    }
+    resetRequests();
 }
 
 void Floor::resetRequests() {
     
+    hasUpRequest = false;
+    hasDownRequest = false;
     
+    for (int i = 0; i < numPeople; i++) {
+        if (people[i].getTargetFloor() - people[i].getCurrentFloor() > 0) {
+            hasUpRequest = true;
+        }
+        else if (people[i].getTargetFloor() - people[i].getCurrentFloor() < 0) {
+            hasDownRequest = true;
+        }
+    }
 }
 
 //////////////////////////////////////////////////////
@@ -65,60 +86,60 @@ Floor::Floor() {
 }
 
 void Floor::prettyPrintFloorLine1(ostream& outs) const {
-	string up = "U";
-	outs << (hasUpRequest ? up : " ") << " ";
-	for (int i = 0; i < numPeople; ++i){
-		outs << people[i].getAngerLevel();
-		outs << ((people[i].getAngerLevel() < MAX_ANGER) ? "   " : "  ");
-	}
-	outs << endl;
+    string up = "U";
+    outs << (hasUpRequest ? up : " ") << " ";
+    for (int i = 0; i < numPeople; ++i){
+        outs << people[i].getAngerLevel();
+        outs << ((people[i].getAngerLevel() < MAX_ANGER) ? "   " : "  ");
+    }
+    outs << endl;
 }
 
 void Floor::prettyPrintFloorLine2(ostream& outs) const {
-	string down = "D";
-	outs << (hasDownRequest ? down : " ") << " ";
-	for (int i = 0; i < numPeople; ++i) {
-		outs << "o   ";
-	}
-	outs << endl;
+    string down = "D";
+    outs << (hasDownRequest ? down : " ") << " ";
+    for (int i = 0; i < numPeople; ++i) {
+        outs << "o   ";
+    }
+    outs << endl;
 }
 
 void Floor::printFloorPickupMenu(ostream& outs) const {
-	cout << endl;
-	outs << "Select People to Load by Index" << endl;
-	outs << "All people must be going in same direction!";
-	/*  O   O
-	// -|- -|-
-	//  |   |
-	// / \ / \  */
-	outs << endl << "              ";
-	for (int i = 0; i < numPeople; ++i) {
-		outs << " O   ";
-	}
-	outs << endl << "              ";
-	for (int i = 0; i < numPeople; ++i) {
-		outs << "-|-  ";
-	}
-	outs << endl << "              ";
-	for (int i = 0; i < numPeople; ++i) {
-		outs << " |   ";
-	}
-	outs << endl << "              ";
-	for (int i = 0; i < numPeople; ++i) {
-		outs << "/ \\  ";
-	}
-	outs << endl << "INDEX:        ";
-	for (int i = 0; i < numPeople; ++i) {
-		outs << " " << i << "   ";
-	}
-	outs << endl << "ANGER:        ";
-	for (int i = 0; i < numPeople; ++i) {
-		outs << " " << people[i].getAngerLevel() << "   ";
-	}
-	outs << endl << "TARGET FLOOR: ";
-	for (int i = 0; i < numPeople; ++i) {
-		outs << " " << people[i].getTargetFloor() << "   ";
-	}
+    cout << endl;
+    outs << "Select People to Load by Index" << endl;
+    outs << "All people must be going in same direction!";
+    /*  O   O
+    // -|- -|-
+    //  |   |
+    // / \ / \  */
+    outs << endl << "              ";
+    for (int i = 0; i < numPeople; ++i) {
+        outs << " O   ";
+    }
+    outs << endl << "              ";
+    for (int i = 0; i < numPeople; ++i) {
+        outs << "-|-  ";
+    }
+    outs << endl << "              ";
+    for (int i = 0; i < numPeople; ++i) {
+        outs << " |   ";
+    }
+    outs << endl << "              ";
+    for (int i = 0; i < numPeople; ++i) {
+        outs << "/ \\  ";
+    }
+    outs << endl << "INDEX:        ";
+    for (int i = 0; i < numPeople; ++i) {
+        outs << " " << i << "   ";
+    }
+    outs << endl << "ANGER:        ";
+    for (int i = 0; i < numPeople; ++i) {
+        outs << " " << people[i].getAngerLevel() << "   ";
+    }
+    outs << endl << "TARGET FLOOR: ";
+    for (int i = 0; i < numPeople; ++i) {
+        outs << " " << people[i].getTargetFloor() << "   ";
+    }
 }
 
 void Floor::setHasUpRequest(bool hasRequest) {
@@ -126,7 +147,7 @@ void Floor::setHasUpRequest(bool hasRequest) {
 }
 
 bool Floor::getHasUpRequest() const {
-	return hasUpRequest;
+    return hasUpRequest;
 }
 
 void Floor::setHasDownRequest(bool hasRequest) {
@@ -134,7 +155,7 @@ void Floor::setHasDownRequest(bool hasRequest) {
 }
 
 bool Floor::getHasDownRequest() const {
-	return hasDownRequest;
+    return hasDownRequest;
 }
 
 int Floor::getNumPeople() const {
